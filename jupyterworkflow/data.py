@@ -32,7 +32,13 @@ def get_fremont_data(filename=FREMONT_FILE, url=FREMONT_URL, force_download=Fals
         urlretrieve(url, 'fremont.csv')
         
     cols = ["Date", "Fremont Bridge East Sidewalk", "Fremont Bridge West Sidewalk"]
-    data = pd.read_csv('fremont.csv', index_col='Date', parse_dates=True, usecols=cols)
+    
+    data = pd.read_csv('fremont.csv', index_col='Date', usecols=cols)
+    try:
+        data.index = pd.to_datetime(data.index, format='%m/%d/%Y %H:%M:%S %p')
+    except TypeError:
+        data.index = pd.to_datatime(data.index)
+        
     data.columns = ['East', 'West']
     data['Total'] = data['East'] + data['West']
     return data
